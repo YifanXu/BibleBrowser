@@ -1,0 +1,24 @@
+.searchForm {
+  margin: 5px;
+}
+
+.navbar.main {
+  position: sticky;
+  top: 0px;
+  z-index: 2;
+}
+
+.searchInputText {
+  width: 50%;
+  display: inline;
+}
+
+.resultDiv {
+  padding: 5px;
+}
+
+.pageInput {
+  width: 47px;
+  text-align: center; 
+  padding: 6px 8px;
+}
