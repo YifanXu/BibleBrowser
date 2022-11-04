@@ -22,3 +22,9 @@
   text-align: center; 
   padding: 6px 8px;
 }
+
+.searchNav {
+  position: sticky;
+  bottom: 0px;
+  background-color: white;
+}
