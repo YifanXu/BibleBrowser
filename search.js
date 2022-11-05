@@ -15,17 +15,6 @@ var searchMethods = {
 var currentSearchMethod = "Indexed"
 
 $(document).ready(function() {
-  $.ajax({
-    url: "./bible.json",
-     type:"get",
-     dataType:'jsonp',  
-     success: function(data){
-       console.log(data);
-     },
-     error:function() {
-       console.log("err");
-     }
- });
   $(".searchNav").hide()
   $(".searchForm").on('submit', e => executeSearch(e, $(".searchInputText").val()))
 
@@ -67,6 +56,18 @@ $(document).ready(function() {
   $(".methodSelect").change(e => {
     currentSearchMethod = e.target.value
   })
+
+  $.ajax({
+    url: "./bible.json",
+     type:"get",
+     dataType:'jsonp',  
+     success: function(data){
+       console.log(data);
+     },
+     error:function() {
+       console.log("err");
+     }
+ });
 })
 
 function updateSearchMethod() {
