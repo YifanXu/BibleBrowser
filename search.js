@@ -58,16 +58,30 @@ $(document).ready(function() {
   })
 
   $.ajax({
-    url: "./bible.json",
+    url: "https://yifanxu.github.io/BibleBrowser/bible.json",
      type:"get",
-     dataType:'jsonp',  
+     dataType:'text',  
      success: function(data){
-       console.log(data);
+       bible = JSON.parse(data)
+       console.log(bible)
      },
      error:function() {
        console.log("err");
      }
  });
+
+ $.ajax({
+  url: "https://yifanxu.github.io/BibleBrowser/bibleIndex.json",
+   type:"get",
+   dataType:'text',  
+   success: function(data){
+     bibleIndex = JSON.parse(data)
+     console.log(bibleIndex)
+   },
+   error:function() {
+     console.log("err");
+   }
+});
 })
 
 function updateSearchMethod() {
