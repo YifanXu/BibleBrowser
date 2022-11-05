@@ -8,7 +8,24 @@ var chapters = bibleIndex.chapters
 
 var results = []
 
+var searchMethods = {
+  "Indexed": executeIndexedSearch,
+  "Sequential": executeSequentialSearch
+}
+var currentSearchMethod = "Indexed"
+
 $(document).ready(function() {
+  $.ajax({
+    url: "./bible.json",
+     type:"get",
+     dataType:'jsonp',  
+     success: function(data){
+       console.log(data);
+     },
+     error:function() {
+       console.log("err");
+     }
+ });
   $(".searchNav").hide()
   $(".searchForm").on('submit', e => executeSearch(e, $(".searchInputText").val()))
 
@@ -42,7 +59,19 @@ $(document).ready(function() {
   $(".pageInput").change(e => {
     resultSkipTo(parseInt(e.target.value))
   })
+
+  Object.keys(searchMethods).forEach(methodName => {
+    $(`<option ${currentSearchMethod === methodName ? 'selected ' : ''}value="${methodName}">${methodName}</option>`).appendTo($(".methodSelect"))
+  })
+
+  $(".methodSelect").change(e => {
+    currentSearchMethod = e.target.value
+  })
 })
+
+function updateSearchMethod() {
+  $(".methodSelect").empty()
+}
 
 // Find a word location list from the index
 function searchSingle (key) {
@@ -117,14 +146,25 @@ function strictMerge (listA, listB) {
   return res
 }
 
-function executeSearch(e, searchPhrase, resetPosition = true) {
-  if (!searchPhrase) return;
-  
-  const startTime = Date.now()
-  if (e) e.preventDefault()
-  console.log('SEARCHING: ' + searchPhrase)
-  searchPhrase = searchPhrase.toLowerCase()
-  
+function executeSequentialSearch (searchPhrase) {
+  let keys = searchPhrase.split(/\s/)
+  console.log(keys)
+  results = []
+  Object.values(bible).forEach((bookContent, bookIndex) => {
+    bookContent.forEach((chapterContent, chapterIndex) => {
+      chapterContent.forEach((verse, verseIndex) => {
+        for (const key of keys) {
+          if (!verse.toLowerCase().includes(key)) {
+            return;
+          }
+        }
+        results.push((bookIndex << 16) + (chapterIndex << 8) + (verseIndex))
+      })
+    })
+  })
+}
+
+function executeIndexedSearch (searchPhrase) {
   let tokens = searchPhrase.split(/\s*"\s*/)
   console.log(tokens)
   if (tokens.length % 2 === 0) {
@@ -157,6 +197,18 @@ function executeSearch(e, searchPhrase, resetPosition = true) {
   else {
     results = []
   }
+}
+
+function executeSearch(e, searchPhrase, resetPosition = true) {
+  if (!searchPhrase) return;
+
+  if (e) e.preventDefault()
+  console.log('SEARCHING: ' + searchPhrase)
+  searchPhrase = searchPhrase.toLowerCase()
+  
+  const startTime = Date.now()
+  searchMethods[currentSearchMethod](searchPhrase)
+  const elapsed = Date.now() - startTime
 
   if (resetPosition) {
     page = 0
@@ -167,9 +219,7 @@ function executeSearch(e, searchPhrase, resetPosition = true) {
   $(".page-item.last>button").html(pageLimit)
   $(".pageInput").attr('max', pageLimit)
 
-  const elapsed = Date.now() - startTime
-
-  $(".resultCount").html(`${results.length} found for "${searchPhrase}" (${elapsed} ms elpased).`)
+  $(".resultCount").html(`${results.length} results found for "${searchPhrase}" using "${currentSearchMethod}" Search (${elapsed} ms elpased).`)
 }
 
 function resultSkipTo (newPage) {

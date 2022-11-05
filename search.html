@@ -44,8 +44,14 @@
     <div>
       <form class="p-0 pb-0 mb-0 bg-light border-bottom searchForm">
         <label>Search the Bible</label>
-        <input type="search" class="form-control searchInputText" autocomplete="false" placeholder="Search...">
-        <button class="btn btn-primary searchSubmit" type="submit">Search</button>
+        <div class="row">
+          <input type="search" class="form-control searchInputText col-6" autocomplete="false" placeholder="Search...">
+          <button class="btn btn-primary searchSubmit col-4 col-sm-2" type="submit">Search</button>
+          <div class="col-12 col-sm-3">
+            <select class="form-select methodSelect" aria-label="select method">
+            </select>
+          </div>
+        </div>
       </form>
       <div class="resultDiv">
         <p class="resultCount">Awaiting Search...</p>
